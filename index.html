@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Application</title>
+    <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --container-bg: #e0e0e0;
+            --button-bg: #fff;
+            --button-bg-special: #ffcccb;
+            --button-bg-equal: lightgreen;
+            --button-shadow: rgba(0, 0, 0, 0.2);
+            --button-hover-shadow: rgba(0, 0, 0, 0.3);
+            --container-shadow: rgba(0, 0, 0, 0.5);
+            --button-color: #333;
+            --button-hover-color: #555;
+            --result-bg: #f9f9f9;
+            --preview-color: #888;
+            --font-family: Arial, sans-serif;
+            --font-size-header: 2em;
+            --font-size-button: 2em;
+            --font-size-result: 2em;
+            --font-size-preview: 1em;
+            --textbox-height: 70px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            background-image: linear-gradient(45deg, #f7f7f7 25%, transparent 25%, transparent 75%, #f7f7f7 75%, #f7f7f7), linear-gradient(45deg, #f7f7f7 25%, transparent 25%, transparent 75%, #f7f7f7 75%, #f7f7f7);
+            background-size: 20px 20px;
+        }
+
+        .calculator-header {
+            margin-bottom: 20px;
+            font-size: var(--font-size-header);
+        }
+
+        .calculator-container {
+            text-align: center;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px var(--container-shadow), inset 0 -3px 3px rgba(255, 255, 255, 0.2), inset 0 3px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #bbb;
+            position: relative;
+            zoom: 0.9;
+        }
+
+        #result-container {
+            position: relative;
+            width: calc(100% - 24px);
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--result-bg);
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 5px var(--button-shadow), inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+            border: 1px solid #bbb;
+        }
+
+        #result {
+            width: 100%;
+            height: var(--textbox-height);
+            font-size: var(--font-size-result);
+            border: none;
+            outline: none;
+            text-align: right;
+            background: transparent;
+        }
+
+        #preview {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: var(--font-size-preview);
+            color: var(--preview-color);
+        }
+
+        .num-btn {
+            width: 80px;
+            height: 80px;
+            margin: 5px;
+            font-size: var(--font-size-button);
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background-color: var(--button-bg);
+            color: var(--button-color);
+            box-shadow: 0 6px var(--button-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .num-btn:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 4px var(--button-hover-shadow);
+            color: var(--button-hover-color);
+        }
+
+        .num-btn:active {
+            box-shadow: 0 2px var(--button-hover-shadow);
+            transform: translateY(2px);
+        }
+
+        .special-btn {
+            width: 80px;
+            height: 80px;
+            background-color: var(--button-bg-special);
+        }
+
+        .special-btn:hover {
+            background-color: #ffb3b0;
+            box-shadow: 0 4px var(--button-hover-shadow);
+        }
+
+        .special-btn:active {
+            box-shadow: 0 2px var(--button-hover-shadow);
+            transform: translateY(2px);
+        }
+
+        .equals-btn {
+            width: 80px;
+            height: 80px;
+            margin: 5px;
+            font-size: var(--font-size-button);
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background-color: var(--button-bg-equal);
+            color: var(--button-color);
+            box-shadow: 0 6px var(--button-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .equals-btn:hover {
+            background-color: #98fb98;
+            box-shadow: 0 4px var(--button-hover-shadow);
+            color: var(--button-hover-color);
+        }
+
+        .equals-btn:active {
+            box-shadow: 0 2px var(--button-hover-shadow);
+            transform: translateY(2px);
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                zoom: 0.8;
+            }
+
+            .num-btn,
+            .special-btn,
+            .equals-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
+            }
+
+            #result {
+                height: 50px;
+                font-size: 1.5em;
+            }
+
+            #preview {
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                zoom: 0.7;
+            }
+
+            .num-btn,
+            .special-btn,
+            .equals-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+
+            #result {
+                height: 40px;
+                font-size: 1.2em;
+            }
+
+            #preview {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator-header">Calculator App</div>
+    <div class="calculator-container">
+        <div id="result-container">
+            <input type="text" id="result" readonly>
+            <div id="preview"></div>
+        </div>
+        <section>
+            <div>
+                <input type="button" value="C" class="num-btn special-btn" onclick="clearInput()">
+                <input type="button" value="DEL" class="num-btn special-btn" onclick="delInput()">
+                <input type="button" value="%" class="num-btn" onclick="percentage()">
+                <input type="button" value="÷" class="num-btn" onclick="divide()">
+            </div>
+            <div>
+                <input type="button" value="7" class="num-btn" onclick="appendNum(7)">
+                <input type="button" value="8" class="num-btn" onclick="appendNum(8)">
+                <input type="button" value="9" class="num-btn" onclick="appendNum(9)">
+                <input type="button" value="×" class="num-btn" onclick="multiply()">
+            </div>
+            <div>
+                <input type="button" value="4" class="num-btn" onclick="appendNum(4)">
+                <input type="button" value="5" class="num-btn" onclick="appendNum(5)">
+                <input type="button" value="6" class="num-btn" onclick="appendNum(6)">
+                <input type="button" value="-" class="num-btn" onclick="subtract()">
+            </div>
+            <div>
+                <input type="button" value="1" class="num-btn" onclick="appendNum(1)">
+                <input type="button" value="2" class="num-btn" onclick="appendNum(2)">
+                <input type="button" value="3" class="num-btn" onclick="appendNum(3)">
+                <input type="button" value="+" class="num-btn" onclick="add()">
+            </div>
+            <div>
+                <input type="button" value="( )" class="num-btn" onclick="parenthesis()">
+                <input type="button" value="0" class="num-btn" onclick="appendNum(0)">
+                <input type="button" value="." class="num-btn" onclick="appendNum('.')">
+                <input type="button" value="=" class="equals-btn" onclick="calculate()">
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let currentInput = '';
+        let currentOperator = '';
+        let previewTimeout;
+        let openParenthesesCount = 0;
+        let isLastInputNumber = false;
+
+        function appendNum(number) {
+            if (currentInput.endsWith(')')) {
+                currentInput += `×${number}`;
+            } else {
+                currentInput += number;
+            }
+            isLastInputNumber = true;
+            updateResult();
+        }
+
+        function add() {
+            currentOperator = "+";
+            currentInput += currentOperator;
+            isLastInputNumber = false;
+            updateResult();
+        }
+
+        function subtract() {
+            currentOperator = "-";
+            currentInput += currentOperator;
+            isLastInputNumber = false;
+            updateResult();
+        }
+
+        function multiply() {
+            currentOperator = "×";
+            currentInput += currentOperator;
+            isLastInputNumber = false;
+            updateResult();
+        }
+
+        function divide() {
+            currentOperator = "÷";
+            currentInput += currentOperator;
+            isLastInputNumber = false;
+            updateResult();
+        }
+
+        function percentage() {
+            currentInput += '%';
+            updateResult();
+        }
+
+        function parenthesis() {
+            const lastChar = currentInput.slice(-1);
+            if (!currentInput || /[+\-×÷(]/.test(lastChar)) {
+                currentInput += '(';
+                openParenthesesCount++;
+            } else if (/[0-9]/.test(lastChar) && openParenthesesCount > 0) {
+                currentInput += ')';
+                openParenthesesCount--;
+            } else if (openParenthesesCount > 0) {
+                let closingParentheses = '';
+                for (let i = 0; i < openParenthesesCount; i++) {
+                    closingParentheses += ')';
+                }
+                currentInput += closingParentheses;
+                openParenthesesCount = 0;
+            } else {
+                currentInput += '×(';
+                openParenthesesCount++;
+            }
+            isLastInputNumber = false;
+            updateResult();
+        }                   
+
+        function calculate() {
+            try {
+                const result = eval(currentInput.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100'));
+                document.getElementById("result").value = result;
+                document.getElementById("preview").innerText = '';
+                currentInput = result.toString();
+            } catch (error) {
+                document.getElementById("result").value = "Error";
+                document.getElementById("preview").innerText = '';
+                currentInput = '';
+            }
+        }
+
+        function clearInput() {
+            currentOperator = '';
+            currentInput = '';
+            openParenthesesCount = 0;
+            updateResult();
+        }
+
+        function delInput() {
+            if (currentInput.slice(-1) === '(') {
+                openParenthesesCount--;
+            } else if (currentInput.slice(-1) === ')') {
+                openParenthesesCount++;
+            }
+            currentInput = currentInput.slice(0, -1);
+            updateResult();
+        }
+
+        function updateResult() {
+            document.getElementById("result").value = currentInput;
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(updatePreview, 200);
+        }
+
+        function updatePreview() {
+            try {
+                if (currentInput.length > 1 && /[+\-×÷]/.test(currentInput)) {
+                    const result = eval(currentInput.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100'));
+                    document.getElementById("preview").innerText = result;
+                } else {
+                    document.getElementById("preview").innerText = '';
+                }
+            } catch (error) {
+                document.getElementById("preview").innerText = '';
+            }
+        }
+    </script>
+</body>
+
+</html>
